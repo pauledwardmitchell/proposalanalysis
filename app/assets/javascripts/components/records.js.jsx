@@ -18,7 +18,14 @@ var Records = React.createClass({
     var index = this.state.records.indexOf(record);
     var records = this.state.records;
     records.splice(index, 1)
-    this.replaceState({ records: records});
+    this.replaceState({ records: records });
+  },
+
+  updateRecord: function(record, data) {
+    var index = this.state.records.indexOf(record);
+    var records = this.state.records;
+    records.splice(index, 1, data)
+    this.replaceState({ records: records });
   },
 
   credits: function() {
@@ -66,7 +73,9 @@ var Records = React.createClass({
           </thead>
           <tbody>
             {this.state.records.map(function(record) {
-              return <Record key={record.id} record={record} handleDeleteRecord={this.deleteRecord} handleEditRecord={this.editRecord} />
+              return <Record key={record.id} record={record} 
+                             handleDeleteRecord={this.deleteRecord} 
+                             handleEditRecord={this.editRecord} />
              }.bind(this))}
           </tbody>
         </table>
