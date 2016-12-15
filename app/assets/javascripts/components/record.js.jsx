@@ -32,7 +32,6 @@ var Record = React.createClass({
       data: { record: data },
       success: function(data) {
         this.setState({ edit: false });
-        debugger
         this.props.handleEditRecord(this.props.record, data);
       }.bind(this)
     });
