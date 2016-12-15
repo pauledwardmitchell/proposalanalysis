@@ -75,7 +75,7 @@ var Records = React.createClass({
             {this.state.records.map(function(record) {
               return <Record key={record.id} record={record} 
                              handleDeleteRecord={this.deleteRecord} 
-                             handleEditRecord={this.editRecord} />
+                             handleEditRecord={this.updateRecord} />
              }.bind(this))}
           </tbody>
         </table>

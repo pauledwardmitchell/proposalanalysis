@@ -22,9 +22,9 @@ var Record = React.createClass({
 
   handleEdit: function(e) {
     e.preventDefault();
-    var data = { title: React.findDOMNode(this.refs.title).value,
-                 date: React.findDOMNode(this.refs.date).value,
-                 amount: React.findDOMNode(this.refs.amount).value }
+    var data = { title: this.refs.title.value,
+                 date: this.refs.date.value,
+                 amount: this.refs.amount.value }
     $.ajax({
       method: 'PUT',
       url: '/records/' + this.props.record.id,
@@ -32,6 +32,7 @@ var Record = React.createClass({
       data: { record: data },
       success: function(data) {
         this.setState({ edit: false });
+        debugger
         this.props.handleEditRecord(this.props.record, data);
       }.bind(this)
     });
