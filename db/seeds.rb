@@ -36,8 +36,8 @@
 #   Quantum.create(date: '2016-06-15', total: [20, 25, 30, 31, 32, 33, 34, 35].sample, machine_id: machine.id)
 # end
 
-5.times do
-machine = Machine.all.sample
-  Service.create(date: '2016-02-01', description: ['will not drain', 'will not heat', 'busted', 'aint got no gas in it', 'rusty', 'smells like puke'].sample, machine_id: machine.id)
-end
+# 5.times do
+# machine = Machine.all.sample
+#   Service.create(date: '2016-02-01', description: ['will not drain', 'will not heat', 'busted', 'aint got no gas in it', 'rusty', 'smells like puke'].sample, machine_id: machine.id)
+# end
 
