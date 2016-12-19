@@ -14,19 +14,10 @@ var Locations = React.createClass({
         <h2 className='title'>
           Your locations
         </h2>
-      <table className='table'>
-        <thead>
-          <tr>
-            <th>'Date'</th>
-            <th>'Amount - Washers'</th>
-            <th>'Amount - Dryers'</th>
-            <th>'Total'</th>
-            <th>'Actions'</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+        {this.state.locations.map(function(location) {
+            return <Location key={location.id} location={location} />
+          }
+          )}
       </div>
     )
   }
