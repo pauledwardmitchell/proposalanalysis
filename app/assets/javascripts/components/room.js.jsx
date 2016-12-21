@@ -11,8 +11,8 @@ var Room = React.createClass({
       url: 'http://localhost:3000/rooms/' + this.props.room.id,
       dataType: 'JSON',
       success: function(data) {
-        this.setState({ expanded: !this.state.expanded })
-        this.setState({ data: data })
+        this.setState({ expanded: !this.state.expanded, 
+                        data: data })
        }.bind(this)
     });
 
@@ -33,9 +33,7 @@ var Room = React.createClass({
           {this.props.room.name}
         </a>
         {this.state.data.map(function(machine) {
-          return <p><a className='btn' key={machine.id} >
-                   {machine.machine_type + ' ' + machine.washco_no }
-                 </a></p>
+          return <Machine key={machine.id} machine={machine} />
         }
 
         )}

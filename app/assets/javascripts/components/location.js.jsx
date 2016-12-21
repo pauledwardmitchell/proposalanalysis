@@ -13,34 +13,12 @@ var Location = React.createClass({
       <div className='rooms' >
         { this.props.data.rooms.map(function(room) {
           return ( 
-          	<Room key={room.id} room={room} />	
+          	<Room key={room.id} room={room} onClick={this.handleToggle} />	
           )
         })}
   	  </div>
       </div>
   	)
-  },
-
-  renderMachines: function() {
-  	return(
-      <div>
-        <h4>
-          { this.props.data.machines.map(function(machine) {
-          	return(
-          	  <p>
-              {machine.machine_type} / 
-              {machine.model_year} / 
-              {machine.washco_no}
-              </p>
-          	)
-          }
-
-          	)}
-        </h4>
-      </div>
-  	)
-  },
-
-
+  }
 
 });
