@@ -9,6 +9,21 @@
   </head>
 
   <body>
+  	<header>
+      <h1>WELCOME TO WASHCO PORTAL</h1>
+      <nav class='navbar navbar-default' role='navigation'>
+        <div class='container-fluid'>
+          <div class='navbar-header'>
+          	<span class='btn'><a href="http://localhost:3000/locations/4">my locations</a></span>
+          	<span class='btn'><a href="http://www.washco.com">washco.com</a></span>
+          </div>
+        </div>
+      </nav>
+  	</header>
     <%= yield %>
+    <footer class='navbar navbar-default'>
+      <p>POWERED BY: </p>
+      <img src="http://washco.com/wp-content/uploads/2014/06/header-logo.jpg">
+    </footer>
   </body>
 </html>
