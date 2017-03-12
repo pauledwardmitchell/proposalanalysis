@@ -4,11 +4,24 @@ const { number, string } = React.PropTypes
 const AnalysisChart = React.createClass({
 
   // propTypes: {
-    
+  //   washers: number.isRequired,
+  //   lgWashers: number.isRequired,
+  //   lgDryers: number.isRequired,
+  //   smDryers: number.isRequired,
+  //   incomePerDoor: number.isRequired,
+  //   bonus: number.isRequired,
+  //   redec: number.isRequired,
+  //   numApartments: number.isRequired,
+  //   leaseYears: number.isRequired,
+  //   percentToLocation: number.isRequired
   // },
 
   getInitialState: function() {
   	return {
+  	  washers: 12,
+  	  lgWashers: 0,
+  	  lgDryers: 4,
+  	  smDryers: 3,
       machFactor: 23, //split into 4 types
       incomePerDoor: 17.59,
       bonus: 1500,
@@ -20,8 +33,20 @@ const AnalysisChart = React.createClass({
   	}
   },
 
-  handleMachFactorChange: function(event) {
-    this.setState({ machFactor: event.target.value})
+  handleWashersChange: function(event) {
+    this.setState({ washers: event.target.value})
+  },
+
+  handleLgWashersChange: function(event) {
+    this.setState({ lgWashers: event.target.value})
+  },
+
+  handleLgDryersChange: function(event) {
+    this.setState({ lgDryers: event.target.value})
+  },
+
+  handleSmDryersChange: function(event) {
+    this.setState({ smDryers: event.target.value})
   },
 
   handleIncomePerDoorChange: function(event) {
@@ -48,8 +73,12 @@ const AnalysisChart = React.createClass({
     this.setState({ percentToLocation: event.target.value })
   },
 
+  machFactor: function() {
+    return parseInt(this.state.washers) + parseInt(this.state.lgWashers) + parseInt((this.state.lgDryers * 2)) + parseInt(this.state.smDryers) //why lgDryers *2? 
+  },
+
   percentToWashco: function() {
-    return 1 - (this.state.percentToLocation * .01)
+    return 1 - (this.state.percentToLocation / 100)
   },
 
   totalBonus: function() {
@@ -65,7 +94,7 @@ const AnalysisChart = React.createClass({
   },
 
   grossMMUA: function() {
-    return this.state.incomePerDoor * this.state.numApartments / this.state.machFactor 
+    return this.state.incomePerDoor * this.state.numApartments / this.machFactor() 
   },
 
   monthlyGrossCollections: function() {
@@ -77,7 +106,7 @@ const AnalysisChart = React.createClass({
   },
 
   netMMUA: function() {
-    return (this.grossMMUA() * this.percentToWashco()) - (this.bonusMonthlyAmort() / this.state.machFactor)
+    return (this.grossMMUA() * this.percentToWashco()) - (this.bonusMonthlyAmort() / this.machFactor())
   },
 
   netIncomePercentage: function() {
@@ -85,7 +114,7 @@ const AnalysisChart = React.createClass({
   },
 
   // costOfServiceCollectionsAdmin: function() {
-  //   return this.state.machFactor * this.leaseMonths() * 12 //why times 12? Months already factored in?
+  //   return this.machFactor() * this.leaseMonths() * 12 //why times 12? Months already factored in?
   // },
 
   leaseMonths: function() {
@@ -93,7 +122,7 @@ const AnalysisChart = React.createClass({
   },
 
   contingency: function() {
-    return 43
+    return ((this.totalEquipmentCost() + this.state.bonus + this.state.redec) / 2) * .0042 // how is this calculated?
   },
 
   interest: function() {
@@ -102,6 +131,10 @@ const AnalysisChart = React.createClass({
 
   interestOnLeaseBonus: function() {
     return this.state.bonus * this.interest() 
+  },
+
+  interestOnRedec: function() {
+    return this.state.redec / 2 * .0133
   },
 
   totalMonthlyCommissionExpense: function() {
@@ -113,27 +146,47 @@ const AnalysisChart = React.createClass({
   },
 
   monthlyServiceCollectionsAdminCost: function() {
-    return this.state.machFactor * 10.02 //why this number?
+    return this.machFactor() * 10.02 //why this number?
   },
 
   redecMonthlyDepreciation: function() {
     return this.state.redec / this.leaseMonths()
   },
+
+  totalWashersCost: function() {
+    return this.state.washers * 823.65
+  },
+
+  totalLgWashersCost: function() {
+    return this.state.lgWashers * 1278.40
+  },
+
+  totalLgDryersCost: function() {
+    return this.state.lgDryers * 1540.10
+  },
+
+  totalSmDryersCost: function() {
+    return this.state.smDryers * 709.75
+  },
+
+  totalEquipmentCost: function() {
+    return this.totalWashersCost() + this.totalLgWashersCost() + this.totalLgDryersCost() + this.totalSmDryersCost()
+  },
   
   totalMonthlyWasherDepreciation: function() {
-    
+    return this.totalWashersCost() / this.leaseMonths() // A machine's life is 7 years?
   },
 
   totalMonthlyLargeWasherDepreciation: function() {
-  
+    return this.totalLgWashersCost() / this.leaseMonths()
   },
 
   totalMonthlyLargeDryerDepreciation: function() {
-
+    return this.totalLgDryersCost() / this.leaseMonths()
   },
 
   totalMonthlySmallDryerDepreciation: function() {
-
+    return this.totalSmDryersCost() / this.leaseMonths()
   },
 
   totalMonthlyMachineDepreciation: function() {
@@ -141,7 +194,35 @@ const AnalysisChart = React.createClass({
   },
 
   totalMonthlyDepreciation: function() {
-    return totalMonthlyMachineDepreciation() + redecMonthlyDepreciation()
+    return this.totalMonthlyMachineDepreciation() + this.redecMonthlyDepreciation()
+  },
+
+  totalOtherMonthlyCosts: function() {
+    return this.monthlyServiceCollectionsAdminCost() + this.totalMonthlyDepreciation() + this.interestOnRedec() + this.contingency()
+  },
+
+  monthlyNetIncomeForLocation: function() {
+    return this.monthlyIncomeAfterCommission() - this.totalOtherMonthlyCosts()
+  },
+
+  grossOverContract: function() {
+    return this.state.incomePerDoor * this.state.numApartments * this.leaseMonths()
+  },
+
+  rentOverContract: function() {
+    return this.grossOverContract() * this.state.percentToLocation / 100
+  },
+
+  totalPaidOutToCustomerOverContract: function() {
+    return this.rentOverContract() + this.totalBonus()
+  },
+
+  netRevenueOverContract: function() {
+    return this.grossOverContract() - this.rentOverContract()
+  },
+
+  netRevenueOverContractMinusAllCosts: function() {
+    return this.netRevenueOverContract() - this.totalEquipmentCost() - this.totalBonus()
   },
 
   render: function() {
@@ -149,10 +230,46 @@ const AnalysisChart = React.createClass({
 
   	<div>
       <h1>Proposal Analysis</h1>
+
+      <div>
+        <h3>Lease Details</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Lease Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Equipment</strong></td>
+            </tr>
+            <tr>
+              <td><label>Washers</label></td>
+              <td><input onChange={this.handleWashersChange} value={this.state.washers} /></td>
+              <td><label>LgWashers</label></td>
+              <td><input onChange={this.handleLgWashersChange} value={this.state.lgWashers} /></td>
+	          <td><label>LgDryers</label></td>
+	          <td><input onChange={this.handleLgDryersChange} value={this.state.lgDryers} /></td>
+	          <td><label>SmDryers</label></td>
+	          <td><input onChange={this.handleSmDryersChange} value={this.state.smDryers} /></td>
+            </tr>
+            <tr>
+              <td>Lease Variables</td>
+            </tr>
+            <tr>
+              <td>Lease Variables</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       
       <div>
-        <label>Machine Factor</label>
-        <input onChange={this.handleMachFactorChange} value={this.state.machFactor} />
+        <label>Washers</label>
+        <input onChange={this.handleWashersChange} value={this.state.washers} />
+
+        <label>LgWashers</label>
+        <input onChange={this.handleLgWashersChange} value={this.state.lgWashers} />
+
   
         <label>Income / Door</label>
         <input onChange={this.handleIncomePerDoorChange} value={this.state.incomePerDoor} />
@@ -174,17 +291,18 @@ const AnalysisChart = React.createClass({
       </div>
 
       <div>
+        <h2>machFactor: {this.machFactor()}</h2>
         <h2>grossMMUA: ${this.grossMMUA()}</h2>
         <h2>netMMUA: ${this.netMMUA()}</h2>
         <h3>percentToWashco: {this.percentToWashco()} %</h3>
         <h2>netIncomePercentage: {this.netIncomePercentage()}%</h2>
         <h2>breakEvenMonths: </h2>
 
-        <h4>grossOverContract: </h4>
-        <h4>rentOverContract: </h4>
-        <h4>Rent + Bonus: </h4>
-        <h4>revenueOverContract: </h4>
-        <h4>Revenue - All Costs</h4>
+        <h4>grossOverContract: {this.grossOverContract() } </h4>
+        <h4>rentOverContract: {this.rentOverContract() } </h4>
+        <h4>Rent + Bonus: { this.totalPaidOutToCustomerOverContract() } </h4>
+        <h4>revenueOverContract: {this.netRevenueOverContract() } </h4>
+        <h4>Revenue - All Costs: {this.netRevenueOverContractMinusAllCosts() }</h4>
 
 
         <h1>- - - - - - - </h1>
@@ -193,11 +311,16 @@ const AnalysisChart = React.createClass({
         <h3>monthlyRentToLocation: { this.monthlyRentToLocation() }</h3>
         <h3>bonusMonthlyAmort: { this.bonusMonthlyAmort() }</h3>
         <h3>interestOnLeaseBonus: { this.interestOnLeaseBonus() }</h3>
-        <h3>totalMonthlyCommissionExpense: { this.totalMonthlyCommissionExpense() }</h3>
+        <h3>totalMonthlyCommissionExpense: { this.totalMonthlyCommissionExpense() } </h3>
         <h3>monthlyIncomeAfterCommission: { this.monthlyIncomeAfterCommission() }  </h3>
         <h1>- - - - - - - </h1>
         <h2>OTHER MONTHLY EXPENSES:</h2>
         <h3>monthlyServiceCollectionsAdminCost: { this.monthlyServiceCollectionsAdminCost() }</h3>
+        <h3>totalMonthlyDepreciation: { this.totalMonthlyDepreciation() }</h3>
+        <h3>interestOnRedec (Interest of Avg Investment?): { this.interestOnRedec() } </h3>
+        <h3>contingency: {this.contingency()} </h3>
+        <h2>totalOtherMonthlyCosts: { this.totalOtherMonthlyCosts() }</h2>
+        <h2>monthlyNetIncomeForLocation: { this.monthlyNetIncomeForLocation() }</h2>
 
       </div>
 
