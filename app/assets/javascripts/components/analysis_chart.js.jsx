@@ -78,7 +78,11 @@ const AnalysisChart = React.createClass({
   },
 
   percentToWashco: function() {
-    return 1 - (this.state.percentToLocation / 100)
+    return 100 - this.state.percentToLocation
+  },
+
+  percentToWashcoToDec: function() {
+  	return this.percentToWashco() * .01
   },
 
   totalBonus: function() {
@@ -106,11 +110,21 @@ const AnalysisChart = React.createClass({
   },
 
   netMMUA: function() {
-    return (this.grossMMUA() * this.percentToWashco()) - (this.bonusMonthlyAmort() / this.machFactor())
+    return (this.grossMMUA() * this.percentToWashcoToDec()) - (this.bonusMonthlyAmort() / this.machFactor())
   },
 
   netIncomePercentage: function() {
-    return "still waiting"
+    return this.monthlyNetIncomeForLocation() / this.monthlyGrossCollections() * 100
+  },
+
+  netIncomePercentageToDec: function() {
+    return this.monthlyNetIncomeForLocation() / this.monthlyGrossCollections()
+  },
+
+  breakEvenMonths: function() {
+    return this.totalUpFrontCost() / this.monthlyNetIncomeForLocation() 
+    // this is different than spreadsheet... 
+    // spreadsheet has doors * money/door * % in demoninator
   },
 
   // costOfServiceCollectionsAdmin: function() {
@@ -122,7 +136,7 @@ const AnalysisChart = React.createClass({
   },
 
   contingency: function() {
-    return ((this.totalEquipmentCost() + this.state.bonus + this.state.redec) / 2) * .0042 // how is this calculated?
+    return ((this.totalEquipmentCost() + this.totalBonus()) / 2) * .0042 // how is this calculated?
   },
 
   interest: function() {
@@ -171,6 +185,10 @@ const AnalysisChart = React.createClass({
 
   totalEquipmentCost: function() {
     return this.totalWashersCost() + this.totalLgWashersCost() + this.totalLgDryersCost() + this.totalSmDryersCost()
+  },
+
+  totalUpFrontCost: function() {
+    return this.totalEquipmentCost() + this.totalBonus()
   },
   
   totalMonthlyWasherDepreciation: function() {
@@ -233,70 +251,72 @@ const AnalysisChart = React.createClass({
 
       <div>
         <h3>Lease Details</h3>
-        <table>
+        <table className='table'>
           <thead>
             <tr>
-              <th>Lease Details</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Equipment</strong></td>
+              <td><strong>Equipment Details</strong></td>
             </tr>
             <tr>
               <td><label>Washers</label></td>
               <td><input onChange={this.handleWashersChange} value={this.state.washers} /></td>
               <td><label>LgWashers</label></td>
               <td><input onChange={this.handleLgWashersChange} value={this.state.lgWashers} /></td>
+            </tr>
+            <tr>
 	          <td><label>LgDryers</label></td>
 	          <td><input onChange={this.handleLgDryersChange} value={this.state.lgDryers} /></td>
 	          <td><label>SmDryers</label></td>
 	          <td><input onChange={this.handleSmDryersChange} value={this.state.smDryers} /></td>
             </tr>
             <tr>
-              <td>Lease Variables</td>
+              <td><strong>Lease Variables</strong></td>
             </tr>
             <tr>
-              <td>Lease Variables</td>
+	          <td><label>Lease Years</label></td>
+	          <td><input onChange={this.handleLeaseYearsChange} value={this.state.leaseYears} /></td>
+
+	          <td><label>% to Location</label></td>
+	          <td><input onChange={this.handlePercentToLocationChange} value={this.state.percentToLocation} /></td>
+            </tr>
+            <tr>
+	          <td><label>Bonus</label></td>
+	          <td><input onChange={this.handleBonusChange} value={this.state.bonus} /></td>
+
+	          <td><label>Redec</label></td>
+	          <td><input onChange={this.handleRedecChange} value={this.state.redec} /></td>
+            </tr>
+            <tr>
+              <td><strong>Location Details</strong></td>
+            </tr>
+            <tr>
+	          <td><label>Income / Door</label></td>
+	          <td><input onChange={this.handleIncomePerDoorChange} value={this.state.incomePerDoor} /></td>
+	  
+	          <td><label>Number of Apartments</label></td>
+	          <td><input onChange={this.handleNumApartmentsChange} value={this.state.numApartments} /></td>
+              
             </tr>
           </tbody>
         </table>
       </div>
       
       <div>
-        <label>Washers</label>
-        <input onChange={this.handleWashersChange} value={this.state.washers} />
-
-        <label>LgWashers</label>
-        <input onChange={this.handleLgWashersChange} value={this.state.lgWashers} />
-
   
-        <label>Income / Door</label>
-        <input onChange={this.handleIncomePerDoorChange} value={this.state.incomePerDoor} />
   
-        <label>Bonus</label>
-        <input onChange={this.handleBonusChange} value={this.state.bonus} />
-
-        <label>Redec</label>
-        <input onChange={this.handleRedecChange} value={this.state.redec} />
-  
-        <label>Number of Apartments</label>
-        <input onChange={this.handleNumApartmentsChange} value={this.state.numApartments} />
-  
-        <label>Lease Years</label>
-        <input onChange={this.handleLeaseYearsChange} value={this.state.leaseYears} />
-
-        <label>% to Location</label>
-        <input onChange={this.handlePercentToLocationChange} value={this.state.percentToLocation} />
       </div>
 
       <div>
-        <h2>machFactor: {this.machFactor()}</h2>
+        //<h2>machFactor: {this.machFactor()}</h2>
         <h2>grossMMUA: ${this.grossMMUA()}</h2>
         <h2>netMMUA: ${this.netMMUA()}</h2>
         <h3>percentToWashco: {this.percentToWashco()} %</h3>
         <h2>netIncomePercentage: {this.netIncomePercentage()}%</h2>
-        <h2>breakEvenMonths: </h2>
+        <h2>breakEvenMonths: { this.breakEvenMonths() }</h2>
 
         <h4>grossOverContract: {this.grossOverContract() } </h4>
         <h4>rentOverContract: {this.rentOverContract() } </h4>
