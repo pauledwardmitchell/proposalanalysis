@@ -261,26 +261,29 @@ const AnalysisChart = React.createClass({
       <h1>Proposal Analysis</h1>
 
       <div>
-        <h3>Lease Details</h3>
-        <table className='table'>
+        <table className='b-table'>
           <thead>
             <tr>
-              <th></th>
+              <th>Lease Details</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><strong>Equipment Details</strong></td>
+              <td>Equipment Details</td>
             </tr>
             <tr>
               <td><label>Washers</label></td>
               <td><input onChange={this.handleWashersChange} value={this.state.washers} /></td>
+            </tr>
+            <tr>
               <td><label>LgWashers</label></td>
               <td><input onChange={this.handleLgWashersChange} value={this.state.lgWashers} /></td>
             </tr>
             <tr>
 	          <td><label>LgDryers</label></td>
 	          <td><input onChange={this.handleLgDryersChange} value={this.state.lgDryers} /></td>
+	        </tr>
+	        <tr>
 	          <td><label>SmDryers</label></td>
 	          <td><input onChange={this.handleSmDryersChange} value={this.state.smDryers} /></td>
             </tr>
@@ -290,14 +293,16 @@ const AnalysisChart = React.createClass({
             <tr>
 	          <td><label>Lease Years</label></td>
 	          <td><input onChange={this.handleLeaseYearsChange} value={this.state.leaseYears} /></td>
-
+            </tr>
+            <tr>
 	          <td><label>% to Location</label></td>
 	          <td><input onChange={this.handlePercentToLocationChange} value={this.state.percentToLocation} /></td>
             </tr>
             <tr>
 	          <td><label>Bonus</label></td>
 	          <td><input onChange={this.handleBonusChange} value={this.state.bonus} /></td>
-
+	        </tr>
+	        <tr>
 	          <td><label>Redec</label></td>
 	          <td><input onChange={this.handleRedecChange} value={this.state.redec} /></td>
             </tr>
@@ -307,18 +312,19 @@ const AnalysisChart = React.createClass({
             <tr>
 	          <td><label>Income / Door</label></td>
 	          <td><input onChange={this.handleIncomePerDoorChange} value={this.state.incomePerDoor} /></td>
-	  
+	        </tr>
+	        <tr>
 	          <td><label>Number of Apartments</label></td>
 	          <td><input onChange={this.handleNumApartmentsChange} value={this.state.numApartments} /></td>
-              
             </tr>
           </tbody>
         </table>
 
-
-        <h3>Monthly Analysis</h3>
-        <table className='table'>
+        <table className='a-table'>
           <thead>
+            <tr>
+              <th>Monthly Analysis</th>
+            </tr>
           </thead>
           <tbody>
             <tr>
@@ -326,7 +332,9 @@ const AnalysisChart = React.createClass({
             </tr>
             <tr>
               <td>Net MMUA: ${this.netMMUA().toFixed(2) }</td>
-              <td>Net Income Percentage: {this.netIncomePercentage().toFixed(2) }%</td>
+            </tr>
+            <tr>
+              <td>Net Income Percentage (after all costs): {this.netIncomePercentage().toFixed(2) }%</td>
             </tr>
             <tr>
             </tr>
@@ -338,10 +346,11 @@ const AnalysisChart = React.createClass({
             </tr>
           </tbody>
         </table>
-        <table className='table'>
+
+        <table className='a-table'>
           <thead>
             <tr>
-              <td><strong>Monthly Commission Expense</strong></td>
+              <th>Monthly Commission Expense</th>
             </tr>
           </thead>
           <tbody>
@@ -361,10 +370,10 @@ const AnalysisChart = React.createClass({
           </tbody>
         </table>
 
-        <table className='table'>
+        <table className='a-table'>
           <thead>
             <tr>
-              <td><strong>Other Monthly Expenses</strong></td>
+              <th>Other Monthly Expenses</th>
             </tr>
           </thead>
           <tbody>
@@ -389,9 +398,12 @@ const AnalysisChart = React.createClass({
           </tbody>
         </table>
 
-        <h3>Cash Flow Over Contract</h3>
-        <table className='table'>
+        <h3></h3>
+        <table className='a-table'>
           <thead>
+            <tr>
+              <th>Cash Flow Over Contract</th>
+            </tr>
           </thead>
           <tbody>
             <tr>
@@ -410,7 +422,7 @@ const AnalysisChart = React.createClass({
               <td>Net Revenue - All Contract Costs: ${this.netRevenueOverContractMinusContractCosts().toFixed(2) }</td>
             </tr>
             <tr>
-              <td>Net Revenue - All Costs (Profit): ${ this.netRevenueOverContractMinusContractAndInternalCosts().toFixed(2) }</td>
+              <td className='box'>Net Revenue - All Costs (Profit): ${ this.netRevenueOverContractMinusContractAndInternalCosts().toFixed(2) }</td>
             </tr>
             <tr>
               <td></td>
@@ -428,36 +440,7 @@ const AnalysisChart = React.createClass({
       </div>
 
       <div>
-        <h2>machFactor: {this.machFactor()}</h2>
-        <h2>grossMMUA: ${this.grossMMUA()}</h2>
-        <h2>netMMUA: ${this.netMMUA()}</h2>
-        <h3>percentToWashco: {this.percentToWashco()} %</h3>
-        <h2>netIncomePercentage: {this.netIncomePercentage()}%</h2>
-        <h2>breakEvenMonths: { this.breakEvenMonths() }</h2>
 
-        <h4>grossOverContract: {this.grossOverContract() } </h4>
-        <h4>rentOverContract: {this.rentOverContract() } </h4>
-        <h4>Rent + Bonus: { this.totalPaidOutToCustomerOverContract() } </h4>
-        <h4>revenueOverContract: {this.netRevenueOverContract() } </h4>
-        <h4>Revenue - All Costs: {this.netRevenueOverContractMinusContractCosts() }</h4>
-
-
-        <h1>- - - - - - - </h1>
-        <h2>monthlyGrossCollections: {this.monthlyGrossCollections()}</h2>
-        <h2>MONTHLY COMMISSION EXPENSE:</h2>
-        <h3>monthlyRentToLocation: { this.monthlyRentToLocation() }</h3>
-        <h3>bonusMonthlyAmort: { this.bonusMonthlyAmort() }</h3>
-        <h3>interestOnLeaseBonus: { this.interestOnLeaseBonus() }</h3>
-        <h3>totalMonthlyCommissionExpense: { this.totalMonthlyCommissionExpense() } </h3>
-        <h3>monthlyIncomeAfterCommission: { this.monthlyIncomeAfterCommission() }  </h3>
-        <h1>- - - - - - - </h1>
-        <h2>OTHER MONTHLY EXPENSES:</h2>
-        <h3>monthlyServiceCollectionsAdminCost: { this.monthlyServiceCollectionsAdminCost() }</h3>
-        <h3>totalMonthlyDepreciation: { this.totalMonthlyDepreciation() }</h3>
-        <h3>interestOnRedec (Interest of Avg Investment?): { this.interestOnRedec() } </h3>
-        <h3>contingency: {this.contingency()} </h3>
-        <h2>totalOtherMonthlyCosts: { this.totalOtherMonthlyCosts() }</h2>
-        <h2>monthlyNetIncomeForLocation: { this.monthlyNetIncomeForLocation() }</h2>
 
       </div>
 
