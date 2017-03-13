@@ -22,7 +22,6 @@ const AnalysisChart = React.createClass({
   	  lgWashers: 0,
   	  lgDryers: 4,
   	  smDryers: 3,
-      machFactor: 23, //split into 4 types
       incomePerDoor: 17.59,
       bonus: 1500,
       redec: 995,
@@ -110,7 +109,7 @@ const AnalysisChart = React.createClass({
   },
 
   netMMUA: function() {
-    return (this.grossMMUA() * this.percentToWashcoToDec()) - (this.bonusMonthlyAmort() / this.machFactor())
+    return (this.grossMMUA() * this.percentToWashcoToDec()) - (this.bonusMonthlyAmort() / this.machFactor()) //should this be calculated after all costs, not just amort of bonus?
   },
 
   netIncomePercentage: function() {
@@ -136,7 +135,7 @@ const AnalysisChart = React.createClass({
   },
 
   contingency: function() {
-    return ((this.totalEquipmentCost() + this.totalBonus()) / 2) * .0042 // how is this calculated?
+    return ((this.totalEquipmentCost() + this.totalBonus()) / 2) * .0042 // how is this calculated? / This same figure if used in the monthly analysis and life of the contract analysis
   },
 
   interest: function() {
@@ -192,7 +191,7 @@ const AnalysisChart = React.createClass({
   },
   
   totalMonthlyWasherDepreciation: function() {
-    return this.totalWashersCost() / this.leaseMonths() // A machine's life is 7 years?
+    return this.totalWashersCost() / this.leaseMonths() // A machine's life is 7 years? So hardcode it?
   },
 
   totalMonthlyLargeWasherDepreciation: function() {
@@ -239,8 +238,20 @@ const AnalysisChart = React.createClass({
     return this.grossOverContract() - this.rentOverContract()
   },
 
-  netRevenueOverContractMinusAllCosts: function() {
-    return this.netRevenueOverContract() - this.totalEquipmentCost() - this.totalBonus()
+  netRevenueOverContractMinusContractCosts: function() {
+    return this.netRevenueOverContract() - this.allContractCostsOverContract()
+  },
+
+  allContractCostsOverContract: function() {
+    return this.totalEquipmentCost() + this.totalBonus()
+  },
+
+  allInternalCostsOverContract: function() {
+    return this.totalOtherMonthlyCosts() * this.leaseMonths()
+  },
+
+  netRevenueOverContractMinusContractAndInternalCosts: function() {
+    return this.monthlyNetIncomeForLocation() * this.leaseMonths() //This includes contingency for every month of contract, not just once as in cash flow section
   },
 
   render: function() {
@@ -303,6 +314,112 @@ const AnalysisChart = React.createClass({
             </tr>
           </tbody>
         </table>
+
+
+        <h3>Monthly Analysis</h3>
+        <table className='table'>
+          <thead>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gross MMUA: ${this.grossMMUA().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Net MMUA: ${this.netMMUA().toFixed(2) }</td>
+              <td>Net Income Percentage: {this.netIncomePercentage().toFixed(2) }%</td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Monthly Gross Collections: ${this.monthlyGrossCollections().toFixed(2) }</td>
+            </tr>
+          </tbody>
+        </table>
+        <table className='table'>
+          <thead>
+            <tr>
+              <td><strong>Monthly Commission Expense</strong></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monthly Rent To Location: ${ this.monthlyRentToLocation().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Monthly Amort of Lease Bonus: ${ this.bonusMonthlyAmort().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Interest On Lease Bonus: ${ this.interestOnLeaseBonus().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Total Monthly Commission Expense: ${ this.totalMonthlyCommissionExpense().toFixed(2) }</td>
+              <td>Monthly Income After Commission: ${ this.monthlyIncomeAfterCommission().toFixed(2) }</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table className='table'>
+          <thead>
+            <tr>
+              <td><strong>Other Monthly Expenses</strong></td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monthly Personnel Cost: ${ this.monthlyServiceCollectionsAdminCost().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Total Monthly Depreciation: ${ this.totalMonthlyDepreciation().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>interestOnRedec (Interest of Avg Investment?): ${ this.interestOnRedec().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Contingency: ${this.contingency().toFixed(2) } </td>
+            </tr>
+            <tr>
+              <td>Total Other Monthly Costs: ${ this.totalOtherMonthlyCosts().toFixed(2) }</td>
+              <td>Monthly Net Income For Location: ${ this.monthlyNetIncomeForLocation().toFixed(2) }</td>
+            </tr>
+            <tr>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Cash Flow Over Contract</h3>
+        <table className='table'>
+          <thead>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Gross Collections Over Contract: ${this.grossOverContract().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Rent Paid to Location Over Contract: ${this.rentOverContract().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Rent + Bonus: ${ this.totalPaidOutToCustomerOverContract().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Net Revenue Over Contract: ${this.netRevenueOverContract().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Net Revenue - All Contract Costs: ${this.netRevenueOverContractMinusContractCosts().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td>Net Revenue - All Costs (Profit): ${ this.netRevenueOverContractMinusContractAndInternalCosts().toFixed(2) }</td>
+            </tr>
+            <tr>
+              <td></td>
+            </tr>
+            <tr>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       
       <div>
@@ -311,7 +428,7 @@ const AnalysisChart = React.createClass({
       </div>
 
       <div>
-        //<h2>machFactor: {this.machFactor()}</h2>
+        <h2>machFactor: {this.machFactor()}</h2>
         <h2>grossMMUA: ${this.grossMMUA()}</h2>
         <h2>netMMUA: ${this.netMMUA()}</h2>
         <h3>percentToWashco: {this.percentToWashco()} %</h3>
@@ -322,7 +439,7 @@ const AnalysisChart = React.createClass({
         <h4>rentOverContract: {this.rentOverContract() } </h4>
         <h4>Rent + Bonus: { this.totalPaidOutToCustomerOverContract() } </h4>
         <h4>revenueOverContract: {this.netRevenueOverContract() } </h4>
-        <h4>Revenue - All Costs: {this.netRevenueOverContractMinusAllCosts() }</h4>
+        <h4>Revenue - All Costs: {this.netRevenueOverContractMinusContractCosts() }</h4>
 
 
         <h1>- - - - - - - </h1>
