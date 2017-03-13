@@ -269,7 +269,10 @@ const AnalysisChart = React.createClass({
           </thead>
           <tbody>
             <tr>
-              <td>Equipment Details</td>
+              <td className='sub a-tooltip'>
+                Equipment Details
+                <span className='a-tooltip tooltiptext'>Mach Factor: { this.machFactor() }</span>
+              </td>
             </tr>
             <tr>
               <td><label>Washers</label></td>
@@ -363,9 +366,20 @@ const AnalysisChart = React.createClass({
             <tr>
               <td>Interest On Lease Bonus: ${ this.interestOnLeaseBonus().toFixed(2) }</td>
             </tr>
+            <tr className='a-tooltip'>
+              <td>
+                Total Monthly Commission Expense: ${ this.totalMonthlyCommissionExpense().toFixed(2) }
+                <span className='a-tooltip tooltiptext'>
+                  <ul>
+                    <li>Monthly Rent To Location: ${ this.monthlyRentToLocation().toFixed(2) }</li>
+                    <li>Monthly Amort of Lease Bonus: ${ this.bonusMonthlyAmort().toFixed(2) }</li>
+                    <li>Interest On Lease Bonus: ${ this.interestOnLeaseBonus().toFixed(2) }</li>
+                  </ul>
+                </span>
+              </td>
+            </tr>
             <tr>
-              <td>Total Monthly Commission Expense: ${ this.totalMonthlyCommissionExpense().toFixed(2) }</td>
-              <td>Monthly Income After Commission: ${ this.monthlyIncomeAfterCommission().toFixed(2) }</td>
+              <td className='box'>Monthly Income After Commission: ${ this.monthlyIncomeAfterCommission().toFixed(2) }</td>
             </tr>
           </tbody>
         </table>
@@ -389,9 +403,21 @@ const AnalysisChart = React.createClass({
             <tr>
               <td>Contingency: ${this.contingency().toFixed(2) } </td>
             </tr>
+            <tr className='a-tooltip'>
+              <td>
+                Total Other Monthly Costs: ${ this.totalOtherMonthlyCosts().toFixed(2) }
+                <span className='a-tooltip tooltiptext'>
+                  <ul>
+                    <li>Monthly Personnel Cost: ${ this.monthlyServiceCollectionsAdminCost().toFixed(2) }</li>
+                    <li>Total Monthly Depreciation: ${ this.totalMonthlyDepreciation().toFixed(2) }</li>
+                    <li>interestOnRedec (Interest of Avg Investment?): ${ this.interestOnRedec().toFixed(2) }</li>
+                    <li>Contingency: ${this.contingency().toFixed(2) }</li>
+                  </ul>
+                </span>
+              </td>
+            </tr>
             <tr>
-              <td>Total Other Monthly Costs: ${ this.totalOtherMonthlyCosts().toFixed(2) }</td>
-              <td>Monthly Net Income For Location: ${ this.monthlyNetIncomeForLocation().toFixed(2) }</td>
+              <td className='box'>Monthly Net Income For Location: ${ this.monthlyNetIncomeForLocation().toFixed(2) }</td>
             </tr>
             <tr>
             </tr>
